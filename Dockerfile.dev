@@ -1,0 +1,17 @@
+# node is a repo, alpine is a tag version for this repo, This line mean's Specifying your base image, starting point as node:alpine and we use node image as we need npm to be installed so we use an image that has already been configured to have npm pre-installed inside of it, alpine it's a tag for the repo and When you get The alpine version for an image, It means you getting hte absolute most stripped down versio nof that image possible.
+FROM node:alpine 
+
+# Setting up a working directory, this step done as you when you copy any files in your local file system to the container root, this root may has files with names same like the files you copying over from outside to this container. So you make this step to make any copied files coming to be in thhis working directory. 
+WORKDIR '/app' 
+
+# To enable the container to have the package.json file to know which dependecies to install
+# To make sure that package.json is available before npm install is executed inside the container.
+# To copy to move your files and folders from your local file system on your machine to the file system inside the the temporary container that is created during the build.
+COPY package.json .
+RUN npm install
+
+# We do the copy operation in two seprate statements to make sure that we just copyint the bare minimum for each successive step as you will not rebuild the image you make any change to anyfile unless package.json file. So we can minimizing cache busting and rebuilds
+COPY . .
+
+# Starting the server with this command.
+CMD ["npm", "run", "start"]
