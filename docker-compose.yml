@@ -1,12 +1,20 @@
 version: '3' # It's a required line to specify the docker-compose you use.
 services: # Services means type of container.
-  web: # First service or first container and web word is just the name of this service or container.
+  web: # First service or first container and web word is just the name of this service or container. And this container is responsible for hositing our development server.
     #build: . # means the node-app container will not use any image instead it will use the contianer in the same directory with the same name.
     build: # To overfile dockerfile selection
       context: .
       dockerfile: Dockerfile.dev
     ports:
       - '3000:3000' #To map the port outside the container to the port inside the container, Again It's port mapping, the first is the port for your localContainer, and the second port that u use to accese your app in the browser.
-    volumes: # This service to make it easier any time you want to start up your development instance or a development container you don't have to use the long command with node_modules and pwd with $ but u write docker compose up
-      - /app/node_module #That's mean do not try to map a folder up against node app_modules inside the container
+    volumes: # This service to make it easier any time you want to start up your development instance or a development container you don't have to use the long command with node_modules and pwd with $ but u write docker compose up.
+      - /app/node_module #That's mean do not try to map a folder up against node app_modules inside the container and that's will enable you to bookmark the reference to node modules locally inside the container.
       - .:/app #. refers the current dir, That's means you want to map the folder before : outside of the container into the app foder inside the container after :
+  tests: # To run, update your tests automatically, This second container will be responsible for running tests and rerunning at anytime the file inside our volumes changes.
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules # In docker file the dash - represent an array.
+      - .:app
+    command: ['npm', 'run', 'test'] # This step to override the starting command used when this test service, container is created, It will be npm run test instead npm run start
