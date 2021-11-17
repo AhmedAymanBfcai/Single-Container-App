@@ -11,4 +11,7 @@ RUN npm run build
 
 # Run Phase
 FROM nginx
+
+# The expose instruction to tell Elastic Beanstalk the port it should use to map for incoming traffic.  
+EXPOSE 80
 COPY --from=builder /app/build /usr/share/nginx/html
