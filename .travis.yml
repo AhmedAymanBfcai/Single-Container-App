@@ -1,0 +1,15 @@
+# This file to tell travis what to do with our code.?
+#1 Tell Travis we need a copy of docker running.
+#2 Build our image using Dockerfile.dev.
+#3 Tell Travis how to run our test suite.
+#4 Tell Travis how to deploy our code to AWS.
+
+sudo: required #Anytime you want to make use of docker, You have to have super user permissoins and this line to take this super user level permissions for travis.
+services: #Travis will install a copy of docker into your local running container.
+  - docker
+
+before_install: #This section to do some stpes before to run some tests or to deploy our app. To build our image before the tests run.
+  - docker build -t ahmadayman/docker-react -f Dockerfile.dev . #To build the your image firstly, -t to tagging the image that will be returned for you by travis and you tag it as it is not eaiser to get the id for the image so you will call it by the image tagName, -f to enforce travis to specific docker file and . for the context.
+
+script: #This section to write all the commands that need to be executed to actually run our test suite. Travis will suppose that our test failed it the returned status code is anything else Zero "0".
+  - docker run ahmadayman/docker-react npm run test -- --coverage #-- --coverage to make sure that NPM run test command automatically exits when the test suite is done.
